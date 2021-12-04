@@ -1,0 +1,32 @@
+{{/* Example input: [v0.0.0-20211204094455-ce8763589b4a, v1.0.0-20211204094455-ce8763589b4a] */}}
+{{/* Matching output: (dict "part" "major" "comp" -1) */}}
+
+{{ $a := partial "release-notify/parse-semver" (default "v0.0.0" (index . 0)) }} 
+{{ $b := partial "release-notify/parse-semver" (default "v0.0.0" (index . 1)) }} 
+
+
+{{/* Let's try to compare by semver part first, in that order: */}}
+{{ $parts := slice "major" "minor" "bugfix" }}
+{{ $res := (dict "part" "" "comp" 0) }}
+{{ range $parts }}
+    {{ if eq $res.comp 0 }}
+        {{ $aPart := index $a . }}
+        {{ $bPart := index $b . }}
+        {{ if gt $aPart $bPart }}
+            {{ $res = (dict "part" . "comp" 1) }}
+        {{ else if gt $bPart $aPart }}
+            {{ $res = (dict "part" . "comp" -1) }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{/* If we don't have a definite 'winner' yet, let's compare by date: */}}
+{{ if eq $res.comp 0 }}
+    {{ if gt $a.date $b.date }}
+        {{ $res = (dict "part" "date" "comp" 1) }}
+    {{ else if gt $a.date $b.part }}
+        {{ $res = (dict "part" "date" "comp" -1) }}
+    {{ end }}
+{{ end }}
+{{ return $res }}
+

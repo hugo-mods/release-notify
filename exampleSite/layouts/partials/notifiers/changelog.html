@@ -1,0 +1,2 @@
+{{ partial "release-notify/default-notifier.html" . }}
+{{ .release.body | markdownify | emojify }}

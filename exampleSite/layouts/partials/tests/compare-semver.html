@@ -1,0 +1,11 @@
+{{ $got := partial "release-notify/compare-semver.html" (slice "v1.0.0-20211204094455-ce8763589b4a" "v1.0.0-20221204094455-ce8763589b4a") }}
+{{ $want := (dict "comp" -1 "part" "date") }}
+{{ if or (ne $got.comp $want.comp) (ne $got.part $want.part) }}
+    {{ errorf "compare-semver mismatch. want: %v. got: %v" $want $got }}
+{{ end }}
+
+{{ $got = partial "release-notify/compare-semver.html" (slice "v1.1.0-20211204094455-ce8763589b4a" "v1.0.0-20211204094455-ce8763589b4a") }}
+{{ $want := (dict "comp" 1 "part" "minor") }}
+{{ if or (ne $got.comp $want.comp) (ne $got.part $want.part) }}
+    {{ errorf "compare-semver mismatch. want: %v. got: %v" $want $got }}
+{{ end }}

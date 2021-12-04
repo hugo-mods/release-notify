@@ -1,0 +1,27 @@
+{{ $mods := partial "release-notify/parse-modules" "go.mod" }}
+
+{{ $notifiers := site.Params.release_notify.modules }}
+{{ $typePriorities := (dict "major" 4 "minor" 3 "bugfix" 2 "date" 1 "" 0 "any" -1) }}
+{{ range $mods }}
+{{ if index $notifiers .url }}
+    {{ $notifier := index $notifiers .url }}
+    {{ $releases := partial "release-notify/releases" (dict "owner" .owner "repo" .repo) }}
+    {{ $release := index $releases 0 }}
+    {{ $newestVersion := $release.tag_name }}
+    {{ $currentVersion := .version }}
+    {{ $res := partial "release-notify/compare-semver" (slice $newestVersion $currentVersion) }}
+    {{ $isTypeIncluded := ge (index $typePriorities $res.part) (index $typePriorities $notifier.type) }}
+    {{/* If there is a newer version and the version includes the correct type */}}
+    {{ if and (eq $res.comp 1) $isTypeIncluded  }}
+        {{ $data := dict 
+            "url" .url
+            "type" $res.part 
+            "newestVersion" $newestVersion 
+            "currentVersion" $currentVersion 
+            "release" $release 
+        }}
+        {{ $notifier := default "partials/release-notify/default-notifier.html" $notifier.partial }}
+        {{ partial $notifier $data }}
+    {{ end }}
+{{ end }}
+{{ end }}

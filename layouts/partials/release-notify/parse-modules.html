@@ -1,0 +1,19 @@
+{{ $gomod := readFile . }}
+
+{{/* Parse go.mod */}}
+{{ $reqsRaw := findRE "github.com/.+/.+ v.+" $gomod }}
+{{ $reqs := dict }}
+{{ range $reqsRaw }}
+    {{ $urlVersion := split . " " }}
+    {{ $url := index $urlVersion 0 }}
+    {{ $version := index $urlVersion 1 }}
+
+    {{ $reqs = merge $reqs (dict $url (dict 
+        "url"     (index $urlVersion 0)
+        "version" (index $urlVersion 1)
+        "owner"   (index (split $url "/") 1)
+        "repo"    (index (split $url "/") 2)
+    )) }}
+{{ end }}
+
+{{ return $reqs }}

@@ -1,0 +1,6 @@
+{{ partial "partials/release-notify.html" }}
+
+{{/* Simple test loader: */}}
+{{ range os.ReadDir "layouts/partials/tests" }}
+    {{ partial (printf "tests/%s" .Name) }}
+{{ end }}

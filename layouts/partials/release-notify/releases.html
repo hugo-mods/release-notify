@@ -1,0 +1,5 @@
+{{ $owner := .owner }}
+{{ $repo := .repo }}
+
+{{ $url := replace (replace site.Params.release_notify.githubUrl "{owner}" $owner) "{repo}" $repo }}
+{{ return (getJSON $url (dict "Accept" "application/vnd.github.v3+json")) }}

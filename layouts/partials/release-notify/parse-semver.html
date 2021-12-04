@@ -1,0 +1,13 @@
+{{/* Example input: v0.0.0-20211204094455-ce8763589b4a */}}
+
+{{/* TODO(kdevo): make fully compatible with https://go.dev/doc/modules/version-numbers */}}
+{{ $parts := split . "-" }}
+{{ $ver := index $parts 0 }}
+{{ $semver := split $ver "." }}
+{{ return (dict 
+    "major"  (int (default 0 (replaceRE "[^0-9]" "" (index $semver 0))))
+    "minor"  (int (default 0 (replaceRE "[^0-9]" "" (index $semver 1))))
+    "bugfix" (int (default 0 (replaceRE "[^0-9]" "" (index $semver 2))))
+    "date"   (index $parts 1)
+    "hash"   (index $parts 2)
+) }}
