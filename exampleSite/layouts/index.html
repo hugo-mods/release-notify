@@ -1,4 +1,4 @@
-{{ partial "partials/release-notify.html" }}
+{{ partial "partials/release-notify.html" site.Params.release_notify }}
 
 {{/* Simple test loader: */}}
 {{ range os.ReadDir "layouts/partials/tests" }}

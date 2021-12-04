@@ -1,6 +1,6 @@
 {{ $mods := partial "release-notify/parse-modules" "go.mod" }}
 
-{{ $notifiers := site.Params.release_notify.modules }}
+{{ $notifiers := default site.Params.release_notify.modules .modules }}
 {{ $typePriorities := (dict "major" 4 "minor" 3 "bugfix" 2 "date" 1 "" 0 "any" -1) }}
 {{ range $mods }}
 {{ if index $notifiers .url }}
